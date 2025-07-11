@@ -2,24 +2,8 @@ import requests
 import json
 from tkinter import *
 
-Ventana= Tk()
-Ventana.title("Id Tik tok")
-user ="taryncosplay"
-
-Usuario = Entry(Ventana, font=("calibri 20"))
-PhpsessionID= Entry(Ventana, font=("calibri 20"))
-token = Entry(Ventana,font=("calibri 20"))
-
-#para sacar el token: Consola poner window.CP.GetToken() despues de buscar el usuario
-#para sacar el PHPSeesionID: a travez de las cookies mediante consola poner document.cookie
-boton_buscar = Button(Ventana,text="Buscar", width= 10, height=2, command= lambda:click_boton_buscar(user=Usuario,PhpsessionID=PhpsessionID,token=token))
-
-Usuario.grid(row = 0, column = 0, columnspan = 4, padx = 5, pady = 5)
-token.grid(row=1,column=0 ,columnspan=5,padx = 5, pady = 5 )
-PhpsessionID.grid(row=2,column=0 ,columnspan=6,padx = 5, pady = 5 )
-Ventana.mainloop()
-
 def click_boton_buscar(user,PhpsessionID,token):
+    
     headers = {
         'accept': '*/*',
         'accept-language': 'en-US,en;q=0.6',
@@ -59,8 +43,43 @@ def click_boton_buscar(user,PhpsessionID,token):
         dic_data = response.json()
         id_user = dic_data["userInfo"]["user"]["id"]
         print(f"El id del usuario {user} es {id_user}")
-        with open("user_links.csv", "a+t") as f:
-            f.write(f"{user}, https://www.tiktok.com/business-suite/messages?&u={id_user}\n")
+        url_message = f" https://www.tiktok.com/business-suite/messages?from=homepage&lang=es&u={id_user}"
+        global var
+        var.set(url_message)
+
+        
+
     except: 
         print(f"El tal {user} no existe (Juan Manuel Santos 2016)")
+
+def add():
+    return str(Usuario.get())
+
+with open('TokenPhp.json','r') as file:
+    data =json.load(file)
+token = data['token']
+PhpsessionID= data["PhpsessionID"]
+
+Ventana= Tk()
+Ventana.title("Id Tik tok")
+Ventana.columnconfigure(0, weight=0)
+Ventana.columnconfigure(1, weight=1)
+Ventana.rowconfigure(2, weight=1)
+
+var = StringVar()
+var.set("santiagoparrap")
+Usuario = Entry(Ventana, font=("calibri 12"))
+Respuesta = Entry(Ventana, font=("calibri 12"),textvariable=var)
+
+
+
+#para sacar el token: Consola poner window.CP.GetToken() despues de buscar el usuario
+#para sacar el PHPSeesionID: a travez de las cookies mediante consola poner document.cookie
+boton_buscar = Button(Ventana,text="Buscar", width= 10, height=2, command= lambda: click_boton_buscar(user=add(),PhpsessionID=PhpsessionID,token=token))
+
+Usuario.grid(row = 0, column = 0, columnspan = 4, padx = 5, pady = 5,sticky=E+W)
+Respuesta.grid(row = 1, column = 0, columnspan = 5, padx = 5, pady = 5,sticky=E+W)
+boton_buscar.grid(row=3,column=0 ,columnspan=7,padx = 5, pady = 5 )
+
+Ventana.mainloop()
 
