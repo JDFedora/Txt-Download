@@ -50,12 +50,12 @@ def click_boton_buscar(user,PhpsessionID,token):
         
 
     except: 
-        print(f"El tal {user} no existe (Juan Manuel Santos 2016)")
+        print(f" {user} no se encuentra informacion")
 
 def add():
     return str(Usuario.get())
 
-with open('TokenPhp.json','r') as file:
+with open('./TokenPhp.json','r') as file:
     data =json.load(file)
 token = data['token']
 PhpsessionID= data["PhpsessionID"]
@@ -67,8 +67,10 @@ Ventana.columnconfigure(1, weight=1)
 Ventana.rowconfigure(2, weight=1)
 
 var = StringVar()
-var.set("santiagoparrap")
-Usuario = Entry(Ventana, font=("calibri 12"))
+var.set("aca se genera link")
+var2 =StringVar()
+var2.set("")
+Usuario = Entry(Ventana, font=("calibri 12"),textvariable= var2)
 Respuesta = Entry(Ventana, font=("calibri 12"),textvariable=var)
 
 
