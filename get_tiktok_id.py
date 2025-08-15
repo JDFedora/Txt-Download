@@ -4,27 +4,25 @@ from tkinter import *
 import pandas as pd
 
 Lista_json_usuarios=[]
+try:
+    datos_usuarios = pd.read_csv('./responses.csv')
+    # Cargar el archivo CSV que contiene las respuestas
 
-datos_usuarios = pd.read_csv('./responses.csv')
-# Cargar el archivo CSV que contiene las respuestas
-
-for i in range(len(datos_usuarios)):
-    archivo_json =json.loads(datos_usuarios.iloc[i,0])
-    for j in range(len(archivo_json["users"])):
-        Nombre = archivo_json["users"][j]["im_user_profile"]["nick_name"]
-        Unique_id = archivo_json["users"][j]["im_user_profile"]["unique_id"]
-        User_id = archivo_json["users"][j]["im_user_profile"]["user_id"]
-        Lista_json_usuarios.append({"Nombre": Nombre, "Unique_id": Unique_id, "User_id": User_id})
-
-
-df = pd.DataFrame(Lista_json_usuarios)
-df.to_csv('usuarios_tiktok.csv', index=False, encoding='utf-8')
+    for i in range(len(datos_usuarios)):
+        archivo_json =json.loads(datos_usuarios.iloc[i,0])
+        for j in range(len(archivo_json["users"])):
+            Nombre = archivo_json["users"][j]["im_user_profile"]["nick_name"]
+            Unique_id = archivo_json["users"][j]["im_user_profile"]["unique_id"]
+            User_id = archivo_json["users"][j]["im_user_profile"]["user_id"]
+            Lista_json_usuarios.append({"Nombre": Nombre, "Unique_id": Unique_id, "User_id": User_id})
+    df = pd.DataFrame(Lista_json_usuarios)
+    df.to_csv('usuarios_tiktok.csv', index=False, encoding='utf-8')
+except FileNotFoundError:
+    print("El archivo responses.csv no se encuentra, se continua con la ejecucion del programa")
 BD_busqueda= pd.read_csv('usuarios_tiktok.csv')
 
 
 def click_boton_buscar(user):
-    
-    
     try:
         BD_busqueda= pd.read_csv('usuarios_tiktok.csv')
         for rows in range(len(BD_busqueda)):
