@@ -1,64 +1,47 @@
 import requests
 import json
 from tkinter import *
+import pandas as pd
 
-def click_boton_buscar(user,PhpsessionID,token):
+Lista_json_usuarios=[]
+
+datos_usuarios = pd.read_csv('./responses.csv')
+# Cargar el archivo CSV que contiene las respuestas
+
+for i in range(len(datos_usuarios)):
+    archivo_json =json.loads(datos_usuarios.iloc[i,0])
+    for j in range(len(archivo_json["users"])):
+        Nombre = archivo_json["users"][j]["im_user_profile"]["nick_name"]
+        Unique_id = archivo_json["users"][j]["im_user_profile"]["unique_id"]
+        User_id = archivo_json["users"][j]["im_user_profile"]["user_id"]
+        Lista_json_usuarios.append({"Nombre": Nombre, "Unique_id": Unique_id, "User_id": User_id})
+
+
+df = pd.DataFrame(Lista_json_usuarios)
+df.to_csv('usuarios_tiktok.csv', index=False, encoding='utf-8')
+BD_busqueda= pd.read_csv('usuarios_tiktok.csv')
+
+
+def click_boton_buscar(user):
     
-    headers = {
-        'accept': '*/*',
-        'accept-language': 'en-US,en;q=0.6',
-        'cache-control': 'no-cache',
-        'pragma': 'no-cache',
-        'priority': 'u=1, i',
-        'referer': 'https://commentpicker.com/tiktok-id.php',
-        'sec-ch-ua': '"Brave";v="137", "Chromium";v="137", "Not/A)Brand";v="24"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Linux"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
-        'sec-gpc': '1',
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
-    }
-
-    #PhpsessionID = "11cer03ri0spi5p9sgogu59r4u"
-    #token= "bfab88fc6a0a77d4eed1dc296206ccda474d08ae4b4c6586cfc6e95ccfafda9c"
-
-    cookies = {
-        'ezoab_186623': 'mod1',
-        'active_template::186623': 'pub_site.1752029025',
-        'ezoadgid_186623': '-1',
-        'ezosuibasgeneris-1': '6dad6530-1d0f-405b-67ae-fc5d68b73001',
-        'fontsLoaded': 'true',
-        'PHPSESSID': f'{PhpsessionID}'
-    }
-
-    #La cookie PHPSESSID esta relacionado con el token generado en la pagina
-
-    #fin with     
     
     try:
-        response = requests.get(f"https://commentpicker.com/actions/tiktok.php?type=user&id={user}&token={token}", headers=headers, cookies=cookies)
+        BD_busqueda= pd.read_csv('usuarios_tiktok.csv')
+        for rows in range(len(BD_busqueda)):
+            if BD_busqueda.iloc[rows,0] == user or BD_busqueda.iloc[rows,1] == user:
+                id_user = BD_busqueda.iloc[rows,2]
+                break
 
-        dic_data = response.json()
-        id_user = dic_data["userInfo"]["user"]["id"]
         print(f"El id del usuario {user} es {id_user}")
         url_message = f" https://www.tiktok.com/business-suite/messages?from=homepage&lang=es&u={id_user}"
         global var
-        var.set(url_message)
-
-        
+        var.set(url_message) 
 
     except: 
         print(f" {user} no se encuentra informacion")
 
 def add():
     return str(Usuario.get())
-
-with open('./TokenPhp.json','r') as file:
-    data =json.load(file)
-token = data['token']
-PhpsessionID= data["PhpsessionID"]
 
 Ventana= Tk()
 Ventana.title("Id Tik tok")
@@ -77,11 +60,15 @@ Respuesta = Entry(Ventana, font=("calibri 12"),textvariable=var)
 
 #para sacar el token: Consola poner window.CP.GetToken() despues de buscar el usuario
 #para sacar el PHPSeesionID: a travez de las cookies mediante consola poner document.cookie
-boton_buscar = Button(Ventana,text="Buscar", width= 10, height=2, command= lambda: click_boton_buscar(user=add(),PhpsessionID=PhpsessionID,token=token))
+boton_buscar = Button(Ventana,text="Buscar", width= 10, height=2, command= lambda: click_boton_buscar(user=add()))
 
 Usuario.grid(row = 0, column = 0, columnspan = 4, padx = 5, pady = 5,sticky=E+W)
 Respuesta.grid(row = 1, column = 0, columnspan = 5, padx = 5, pady = 5,sticky=E+W)
 boton_buscar.grid(row=3,column=0 ,columnspan=7,padx = 5, pady = 5 )
 
 Ventana.mainloop()
+
+
+
+#leer usuarios
 
