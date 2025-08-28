@@ -14,14 +14,16 @@ try:
             Nombre = archivo_json["users"][j]["im_user_profile"]["nick_name"]
             Unique_id = archivo_json["users"][j]["im_user_profile"]["unique_id"]
             User_id = archivo_json["users"][j]["im_user_profile"]["user_id"]
+            #Agrego los datos a una lista para volverlo DF
             Lista_json_usuarios.append({"Nombre": Nombre, "Unique_id": Unique_id, "User_id": User_id})
     df = pd.DataFrame(Lista_json_usuarios)
+    #Creo la Bd de Usuarios
     df.to_csv('usuarios_tiktok.csv', index=False, encoding='utf-8')
 except FileNotFoundError:
     print("El archivo responses.csv no se encuentra, se continua con la ejecucion del programa")
 BD_busqueda= pd.read_csv('usuarios_tiktok.csv')
 
-
+# Buscador de la aplicacion
 def click_boton_buscar(user):
     try:
         BD_busqueda= pd.read_csv('usuarios_tiktok.csv')
@@ -41,6 +43,7 @@ def click_boton_buscar(user):
 def add():
     return str(Usuario.get())
 
+#interfaz grafica
 Ventana= Tk()
 Ventana.title("Id Tik tok")
 Ventana.columnconfigure(0, weight=0)
@@ -68,5 +71,4 @@ Ventana.mainloop()
 
 
 
-#leer usuarios
 
